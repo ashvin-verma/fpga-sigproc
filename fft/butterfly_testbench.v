@@ -12,8 +12,7 @@ module butterfly_tb;
     wire [WIDTH-1:0] out1_i;
     wire [WIDTH-1:0] out2_r;
     wire [WIDTH-1:0] out2_i;
-
-    // Instantiate the butterfly module
+    
     butterfly #(
         .WIDTH(WIDTH),
         .w_r(w_r),
@@ -30,7 +29,6 @@ module butterfly_tb;
     );
 
     initial begin
-        // Initialize inputs
         in1_r = 16'd10;
         in1_i = 16'd5;
         in2_r = 16'd3;
@@ -42,7 +40,16 @@ module butterfly_tb;
         // Display results
         $display("out1_r: %d, out1_i: %d, out2_r: %d, out2_i: %d", out1_r, out1_i, out2_r, out2_i);
         
-        // Add more test cases if needed
+        in1_r = 16'd10;
+        in1_i = 16'd5;
+        in2_r = 16'd8;
+        in2_i = 16'd4;
+
+        // Wait for changes to propagate
+        #10;
+
+        // Display results
+        $display("out1_r: %d, out1_i: %d, out2_r: %d, out2_i: %d", out1_r, out1_i, out2_r, out2_i);
 
         // Finish simulation
         $finish;

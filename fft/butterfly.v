@@ -23,8 +23,8 @@ module butterfly #(
     wire [WIDTH-1:0] out_r;
     wire [WIDTH-1:0] out_i;
 
-    z1_r = (in1_r - in2_r);
-    z2_i = (in1_i - in2_i);
+    assign  z1_r = (in1_r - in2_r);
+    assign  z1_i = (in1_i - in2_i);
 
     // Instantiate the child module
     CompMult #(
@@ -52,7 +52,7 @@ module CompMult #(
     input wire [WIDTH-1:0] z1_r,
     input wire [WIDTH-1:0] z1_i,
     output wire [WIDTH-1:0] o_r,
-    output wire [WIDTH-1:0] o_i,
+  output wire [WIDTH-1:0] o_i
 );
 
     assign o_r = (z1_r * w_r) - (z1_i * w_i);
