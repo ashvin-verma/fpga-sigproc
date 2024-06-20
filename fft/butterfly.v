@@ -1,7 +1,7 @@
 module butterfly #(
     parameter WIDTH = 16,
-    parameter w_r = 0,
-    parameter w_i = 0
+    parameter w_r = 16'h000,
+    parameter w_i = 16'h000
 )(
     input wire [WIDTH-1:0] in1_r,
     input wire [WIDTH-1:0] in1_i,
