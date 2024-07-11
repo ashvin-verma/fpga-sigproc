@@ -1,62 +1,26 @@
-module butterfly #(
-    parameter WIDTH = 16,
-    parameter w_r = 16'h000,
-    parameter w_i = 16'h000
-)(
-    input wire [WIDTH-1:0] in1_r,
-    input wire [WIDTH-1:0] in1_i,
-    input wire [WIDTH-1:0] in2_r,
-    input wire [WIDTH-1:0] in2_i,
-    output wire [WIDTH-1:0] out1_r,
-    output wire [WIDTH-1:0] out1_i,
-    output wire [WIDTH-1:0] out2_r,
-    output wire [WIDTH-1:0] out2_i
+module butterfly(
+    input wire signed [15:0] a_real, a_imag,
+    input wire signed [15:0] b_real, b_imag,
+    input wire signed [15:0] twiddle_real, twiddle_imag,
+    output wire signed [15:0] y_real, y_imag,
+    output wire signed [15:0] z_real, z_imag
 );
-    // Internal logic
-    assign out1_r = in1_r + in2_r;
-    assign out1_i = in1_i + in2_i;
+    wire signed [31:0] mult1_real, mult1_imag;
+    wire signed [31:0] mult2_real, mult2_imag;
 
-    // Internal wire
+    assign mult1_real = b_real * twiddle_real - b_imag * twiddle_imag;
+    assign mult1_imag = b_real * twiddle_imag + b_imag * twiddle_real;
 
-    wire [WIDTH-1:0] z1_r;
-    wire [WIDTH-1:0] z1_i;
-    wire [WIDTH-1:0] out_r;
-    wire [WIDTH-1:0] out_i;
+    // truncate and round 
+    wire signed [15:0] b_twiddle_real = mult1_real[30:15] + mult1_real[14];
+    wire signed [15:0] b_twiddle_imag = mult1_imag[30:15] + mult1_imag[14];
 
-    assign  z1_r = (in1_r - in2_r);
-    assign  z1_i = (in1_i - in2_i);
+    // y = a + b*twiddle
+    assign y_real = a_real + b_twiddle_real;
+    assign y_imag = a_imag + b_twiddle_imag;
 
-    // Instantiate the child module
-    CompMult #(
-        .WIDTH(WIDTH),
-        .w_r(w_r),
-        .w_i(w_i)
-    ) comp (
-        .z1_r(z1_r),
-        .z1_i(z1_i),
-        .o_r(out_r),
-        .o_i(out_i)
-    );
+    // z = a - b*twiddle
+    assign z_real = a_real - b_twiddle_real;
+    assign z_imag = a_imag - b_twiddle_imag;
 
-    // Use the output of the child module
-    assign out2_r = out_r;
-    assign out2_i = out_i;
-
-endmodule
-
-module CompMult #(
-    parameter WIDTH = 16,
-    parameter w_r = 0,
-    parameter w_i = 0
-) (
-    input wire [WIDTH-1:0] z1_r,
-    input wire [WIDTH-1:0] z1_i,
-    output wire [WIDTH-1:0] o_r,
-  output wire [WIDTH-1:0] o_i
-);
-
-    assign o_r = (z1_r * w_r) - (z1_i * w_i);
-    assign o_i = (z1_r * w_i) + (z1_i * w_r);
-    
-    
 endmodule
